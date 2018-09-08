@@ -2,9 +2,9 @@ FROM openjdk:8-alpine
 
 ENV JIRA_HOME=/var/atlassian/jira
 ENV JIRA_INSTALL=/opt/atlassian/jira
-ENV JIRA_VERSION=7.12.1
-ENV JDBC_DL_PATH=https://jdbc.postgresql.org/download/
-ENV JDBC_DRIVER=postgresql-42.2.5.jar
+ARG JIRA_VERSION=7.12.1
+ARG JDBC_DL_PATH=https://jdbc.postgresql.org/download/
+ARG JDBC_DRIVER=postgresql-42.2.5.jar
 
 RUN set -x \
     && apk add --no-cache curl xmlstarlet bash ttf-dejavu libc6-compat \
@@ -31,5 +31,7 @@ RUN set -x \
 USER daemon:daemon
 
 EXPOSE 8080
+
+WORKDIR ${JIRA_HOME}
 
 CMD ["/opt/atlassian/jira/bin/start-jira.sh", "-fg"]
