@@ -1,0 +1,5 @@
+/data/jiradata/var
+/data/jiradata/optlogs
+/data/confluencedata/varlogs
+/data/confluencedata/optlogs
+/data/postgresqldata

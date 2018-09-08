@@ -1,19 +1,25 @@
-version: '3'
+version: '3.3'
 
 services:
   jira:
     depends_on:
       - jiraconfldb
-    build: ./jira
+    build: 
+      context: ./jira
+      args:
+        - JIRA_VERSION=7.12.1
+        - JDBC_DL_PATH=https://jdbc.postgresql.org/download/
+        - JDBC_DRIVER=postgresql-42.2.5.jar
     networks:
       - jiraconflnet
     volumes:
-      - /data/jiradata:/var/atlassian/jira
+      - /data/jiradata/var:/var/atlassian/jira
+      - /data/jiradata/optlogs:/opt/atlassian/jira/logs
     ports:
       - "8080:8080"
     environment:
-      - JIRA_DATABASE_URL=postgresql://jira@postgresql/jiradb
-      - JIRA_DB_PASSWORD=macajira2018
+      - JIRA_DATABASE_URL=postgresql://jira@jiraconfldb/jiradb
+      - JIRA_DB_PASSWORD=jira2018
       - SETENV_JVM_MINIMUM_MEMORY=256m
       - SETENV_JVM_MAXIMUM_MEMORY=1g
       - JIRA_PROXY_NAME=
@@ -28,11 +34,17 @@ services:
   confluence:
     depends_on:
       - jiraconfldb
-    build: ./confluence
+    build: 
+      context: ./confluence
+      args:
+        - CONF_VERSION=6.11.0
+        - JDBC_DL_PATH=https://jdbc.postgresql.org/download/
+        - JDBC_DRIVER=postgresql-42.2.5.jar 
     networks:
       - jiraconflnet
     volumes:
-      - /data/confluencedata:/var/atlassian/application-data/confluence
+      - /data/confluencedata/varlogs:/var/atlassian/confluence/logs
+      - /data/confluencedata/optlogs:/opt/atlassian/confluence/logs
     ports:
       - "8090:8090"
       - "8091:8091"
@@ -52,7 +64,15 @@ services:
 
 
   jiraconfldb:
-    build: ./postgresql
+    build:
+      context: ./postgresql
+      args:
+        - CONFLUENCE_DB_USER=confluence
+        - CONFLUENCE_DB_PASSWORD=confl2018
+        - CONFLUENCE_DBNAME=confluencedb
+        - JIRA_DB_USER=jira
+        - JIRA_DB_PASSWORD=jira2018
+        - JIRA_DBNAME=jiradb
     networks:
       - jiraconflnet
     volumes:

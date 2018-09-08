@@ -4,22 +4,22 @@ ENV CONF_HOME=/var/atlassian/confluence
 ENV CONF_INSTALL=/opt/atlassian/confluence
 ARG CONF_VERSION=6.11.0
 ENV JAVA_CACERTS=${JAVA_HOME}/jre/lib/security/cacerts
-ARG CERTIFICATE=${CONF_HOME}/certificate
+ENV CERTIFICATE=${CONF_HOME}/certificate
 ARG JDBC_DL_PATH=https://jdbc.postgresql.org/download/
 ARG JDBC_DRIVER=postgresql-42.2.5.jar
 
 RUN set -x \
     && apk --no-cache add --update curl xmlstarlet bash ttf-dejavu libc6-compat \
     && mkdir -p                "${CONF_HOME}" \
-    && chmod -R 700            "${CONF_HOME}" \
+    && chmod -R 777            "${CONF_HOME}" \
     && chown daemon:daemon     "${CONF_HOME}" \
     && mkdir -p                "${CONF_INSTALL}/conf" \
     && curl -Ls                "https://www.atlassian.com/software/confluence/downloads/binary/atlassian-confluence-${CONF_VERSION}.tar.gz" | tar -xz --directory "${CONF_INSTALL}" --strip-components=1 --no-same-owner \
     && curl -Ls                "${JDBC_DL_PATH}${JDBC_DRIVER}" -o "${CONF_INSTALL}/confluence/WEB-INF/lib/${JDBC_DRIVER}" \
-    && chmod -R 700            "${CONF_INSTALL}/conf" \
-    && chmod -R 700            "${CONF_INSTALL}/temp" \
-    && chmod -R 700            "${CONF_INSTALL}/logs" \
-    && chmod -R 700            "${CONF_INSTALL}/work" \
+    && chmod -R 777            "${CONF_INSTALL}/conf" \
+    && chmod -R 777            "${CONF_INSTALL}/temp" \
+    && chmod -R 777            "${CONF_INSTALL}/logs" \
+    && chmod -R 777            "${CONF_INSTALL}/work" \
     && chown -R daemon:daemon  "${CONF_INSTALL}/conf" \
     && chown -R daemon:daemon  "${CONF_INSTALL}/temp" \
     && chown -R daemon:daemon  "${CONF_INSTALL}/logs" \
