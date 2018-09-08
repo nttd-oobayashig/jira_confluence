@@ -1,0 +1,74 @@
+version: '3'
+
+services:
+  jira:
+    depends_on:
+      - postgresql
+    image: oobayashig/jira-core
+    networks:
+      - jiraconflnet
+    volumes:
+      - /data/jiradata:/var/atlassian/jira
+    ports:
+      - "8080:8080"
+    environment:
+      - JIRA_DATABASE_URL: postgresql://jira@postgresql/jiradb
+      - JIRA_DB_PASSWORD: macajira2018
+      - SETENV_JVM_MINIMUM_MEMORY: 256m
+      - SETENV_JVM_MAXIMUM_MEMORY: 1g
+      - JIRA_PROXY_NAME:
+      - JIRA_PROXY_PORT:
+      - JIRA_PROXY_SCHEME:
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500k"
+        max-file: "50"
+
+  confluence:
+    depends_on:
+      - postgresql
+    image: oobayashig/confluence-server
+    netwokrs:
+      - jiraconflnet
+    volumes:
+      - /data/confluencedata:/var/atlassian/application-data/confluence
+    ports:
+      - "8090:8090"
+      - "8091:8091"
+    environment:
+      - JVM_MINIMUM_MEMORY: 1024m
+      - JVM_MAXIMUM_MEMORY: 1024m
+      - CATALINA_CONNECTOR_PROXYNAME:
+      - CATALINA_CONNECTOR_PROXYPORT:
+      - CATALINA_CONNECTOR_SCHEME:
+      - CATALINA_CONNECTOR_SECURE:
+      - JVM_SUPPORT_RECOMMENDED_ARGS:
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500k"
+        max-file: "50"
+
+
+  jiraconfldb:
+    image: oobayashig/jiraconfldb
+    networks:
+      - jiraconflnet
+    volumes:
+      - /data/postgresqldata:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER: 
+      - POSTGRES_PASSWORD: 
+      - POSTGRES_DB: 
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500k"
+        max-file: "50"
+
+
+networks:
+  jiraconflnet:
+    driver: bridge
+
